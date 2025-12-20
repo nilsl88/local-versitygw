@@ -5,7 +5,7 @@ mkdir -p ./data ./meta/sidecar ./iam ./certs
 podman compose -f docker-compose.yml up -d
 
 # Create one admin account + 3 user accounts (each with keys)
-export ADMIN_ENDPOINT_URL="http://127.0.0.1:7071"
+export ADMIN_ENDPOINT_URL="http://host.containers.internal:7071"
 export ROOT_ACCESS_KEY_ID="rootaccess"
 export ROOT_SECRET_ACCESS_KEY="rootsecret"
 
@@ -29,7 +29,7 @@ podman run --rm \
   --entrypoint /bin/sh \
   -e AWS_ACCESS_KEY_ID="vadmin" \
   -e AWS_SECRET_ACCESS_KEY="vadminsecret" \
-  -e AWS_ENDPOINT_URL="http://127.0.0.1:7070" \
+  -e AWS_ENDPOINT_URL="http://host.containers.internal:7070" \
   -e AWS_DEFAULT_REGION="us-east-1" \
   amazon/aws-cli \
   -lc '
@@ -48,7 +48,7 @@ podman exec -it versitygw versitygw admin --access "$ROOT_ACCESS_KEY_ID" --secre
 # Validate each user sees only their bucket
 podman run --rm \
   --entrypoint /bin/sh \
-  -e AWS_ENDPOINT_URL="http://127.0.0.1:7070" \
+  -e AWS_ENDPOINT_URL="http://host.containers.internal:7070" \
   -e AWS_DEFAULT_REGION="us-east-1" \
   amazon/aws-cli \
   -lc '
