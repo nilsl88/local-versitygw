@@ -1,0 +1,46 @@
+services:
+  versitygw:
+    image: ghcr.io/versity/versitygw:latest
+    container_name: versitygw
+    environment:
+      # Root (superuser) credentials for the gateway
+      ROOT_ACCESS_KEY: rootaccess
+      ROOT_SECRET_KEY: rootsecret
+    # Global Options (https://github.com/versity/versitygw/wiki/Global-Options)
+    command:
+      [
+        "--port", ":7070",
+        "--admin-port", ":7071",
+        "--iam-dir", "/iam",
+        "posix",
+        "--sidecar", "/meta/sidecar",
+        "/data"
+      ]
+    ports:
+      - "7070:7070"  # S3 API (HTTPS after TLS enabled)
+      - "7071:7071"  # Admin API (HTTPS after TLS enabled)
+    volumes:
+      - ./data:/data:Z
+      - ./meta:/meta:Z
+      - ./iam:/iam:Z
+    restart: unless-stopped
+
+  caddy:
+    image: docker.io/caddy:2
+    container_name: versitygw-proxy
+    ports:
+      - "443:443"
+      - "443:443/udp"
+      - "80:80"   # optional; useful for redirects, ACME, etc.
+    volumes:
+      - ./Caddyfile-self-signed:/etc/caddy/Caddyfile:Z,ro
+      - ./certs:/certs:Z,ro
+      - caddy_data:/data:Z
+      - caddy_config:/config:Z
+    restart: unless-stopped
+    depends_on:
+      - versitygw
+
+volumes:
+  caddy_data:
+  caddy_config:

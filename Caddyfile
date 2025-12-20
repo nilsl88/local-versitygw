@@ -1,0 +1,18 @@
+# Replace versitygw.example.com with your hostname (or use :7070 for no SNI, but hostname is better)
+versitygw.example.com {
+  # S3 API
+    reverse_proxy versitygw:7070 {
+      header_up Host {host}
+      header_up X-Forwarded-Host {host}
+      header_up X-Forwarded-Proto {scheme}
+      header_up X-Forwarded-Port {server_port}
+    }
+
+  # Logging
+  log {
+    output stdout
+    format console
+    level INFO
+  }
+}
+

@@ -1,0 +1,31 @@
+services:
+  versitygw:
+    image: ghcr.io/versity/versitygw:latest
+    container_name: versitygw-certs
+    environment:
+      # Root (superuser) credentials for the gateway
+      ROOT_ACCESS_KEY: rootaccess
+      ROOT_SECRET_KEY: rootsecret
+    # Global Options (https://github.com/versity/versitygw/wiki/Global-Options)
+    command:
+      [
+        "--port", ":7070",
+        "--admin-port", ":7071",
+        "--cert", "/certs/fullchain.pem",
+        "--key",  "/certs/privkey.key",
+        "--admin-cert", "/certs/fullchain.pem",
+        "--admin-cert-key",  "/certs/privkey.key",
+        "--iam-dir", "/iam",
+        "posix",
+        "--sidecar", "/meta/sidecar",
+        "/data"
+      ]
+    ports:
+      - "7070:7070"  # S3 API (HTTPS after TLS enabled)
+      - "7071:7071"  # Admin API (HTTPS after TLS enabled)
+    volumes:
+      - ./data:/data:Z
+      - ./meta:/meta:Z
+      - ./iam:/iam:Z
+      - ./certs:/certs:Z,ro
+    restart: unless-stopped

@@ -1,0 +1,26 @@
+services:
+  versitygw:
+    image: ghcr.io/versity/versitygw:latest
+    container_name: versitygw
+    environment:
+      # Root (superuser) credentials for the gateway
+      ROOT_ACCESS_KEY: rootaccess
+      ROOT_SECRET_KEY: rootsecret
+    # Global Options (https://github.com/versity/versitygw/wiki/Global-Options)
+    command:
+      [
+        "--port", ":7070",
+        "--admin-port", ":7071",
+        "--iam-dir", "/iam",
+        "posix",
+        "--sidecar", "/meta/sidecar",
+        "/data"
+      ]
+    ports:
+      - "7070:7070"  # S3 API
+      - "7071:7071"  # Admin API (recommended to firewall/limit)
+    volumes:
+      - ./data:/data:Z
+      - ./meta:/meta:Z
+      - ./iam:/iam:Z
+    restart: unless-stopped
