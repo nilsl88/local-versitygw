@@ -1,4 +1,4 @@
-This repository provides a small set of **Compose** manifests and a helper script to run **[VersityGW](https://github.com/versity/versitygw)** (an S3-compatible gateway) backed by a local **POSIX filesystem**.
+This repository provides a small set of **Compose** manifests and a helper script to run **[Versitygw](https://github.com/versity/versitygw)** (an S3-compatible gateway) backed by a local **POSIX filesystem**.
 
 It can:
 - run an S3 endpoint backed by a local folder (`./data`)
