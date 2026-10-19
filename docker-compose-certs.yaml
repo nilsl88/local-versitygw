@@ -11,6 +11,10 @@ services:
       [
         "--port", ":7070",
         "--admin-port", ":7071",
+        "--webui-s3-prefix", "/ui",
+        "--webui-gateways", "https://${VGW_HOSTNAME:-localhost}:7070",
+        "--webui-admin-gateways", "https://${VGW_HOSTNAME:-localhost}:7071",
+        "--cors-allow-origin", "https://${VGW_HOSTNAME:-localhost}:7070",
         "--cert", "/certs/fullchain.pem",
         "--key",  "/certs/privkey.key",
         "--admin-cert", "/certs/fullchain.pem",

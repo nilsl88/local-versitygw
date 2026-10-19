@@ -2,7 +2,7 @@
 mkdir -p ./data ./meta/sidecar ./iam ./certs
 
 # Start it
-podman compose -f docker-compose.yml up -d
+podman compose -f docker-compose.yaml up -d
 
 # Create one admin account + 3 user accounts (each with keys)
 export ADMIN_ENDPOINT_URL="http://host.containers.internal:7071"
