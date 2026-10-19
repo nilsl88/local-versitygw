@@ -1,22 +1,20 @@
-# Replace versitygw.example.com with your hostname (or use :7070 for no SNI, but hostname is better)
-versitygw.example.com {
+{$VGW_HOSTNAME:versitygw.example.com} {
   tls /certs/fullchain.cer /certs/private.key
 
-  # S3 API
-  handle {
-    reverse_proxy versitygw:7070 {
-      header_up Host {host}
-      header_up X-Forwarded-Host {host}
-      header_up X-Forwarded-Proto {scheme}
-      header_up X-Forwarded-Port {server_port}
-    }
+  @admin path /admin /admin/*
+  handle @admin {
+    # Keep the signed /admin path intact when forwarding requests.
+    reverse_proxy versitygw:7071
   }
 
-  # Logging
+  handle {
+    # S3 API and the WebGUI at /ui/ share this listener.
+    reverse_proxy versitygw:7070
+  }
+
   log {
     output stdout
     format console
     level INFO
   }
 }
-

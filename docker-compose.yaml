@@ -11,6 +11,10 @@ services:
       [
         "--port", ":7070",
         "--admin-port", ":7071",
+        "--webui-s3-prefix", "/ui",
+        "--webui-gateways", "http://${VGW_HOSTNAME:-localhost}:7070",
+        "--webui-admin-gateways", "http://${VGW_HOSTNAME:-localhost}:7071",
+        "--cors-allow-origin", "http://${VGW_HOSTNAME:-localhost}:7070",
         "--iam-dir", "/iam",
         "posix",
         "/data"

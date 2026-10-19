@@ -11,13 +11,18 @@ services:
       [
         "--port", ":7070",
         "--admin-port", ":7071",
+        "--admin-path-prefix", "/admin",
+        "--webui-s3-prefix", "/ui",
+        "--webui-gateways", "https://${VGW_HOSTNAME:-versitygw.example.com}",
+        "--webui-admin-gateways", "https://${VGW_HOSTNAME:-versitygw.example.com}/admin",
+        "--cors-allow-origin", "https://${VGW_HOSTNAME:-versitygw.example.com}",
         "--iam-dir", "/iam",
         "posix",
         "/data"
       ]
     ports:
-      - "7070:7070"  # S3 API (HTTPS after TLS enabled)
-      - "7071:7071"  # Admin API (HTTPS after TLS enabled)
+      - "7070:7070"  # Direct S3 API (HTTP); use Caddy HTTPS for the WebGUI
+      - "7071:7071"  # Direct admin API at /admin (HTTP)
     volumes:
       - ./data:/data:Z
       - ./meta:/meta:Z
@@ -27,6 +32,8 @@ services:
   caddy:
     image: docker.io/caddy:2
     container_name: versitygw-proxy
+    environment:
+      VGW_HOSTNAME: ${VGW_HOSTNAME:-versitygw.example.com}
     ports:
       - "443:443"
       - "443:443/udp"
